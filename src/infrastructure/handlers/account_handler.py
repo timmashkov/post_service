@@ -1,57 +1,44 @@
-import logging
-from typing import Any, Union
-from uuid import UUID
+from typing import Any
 
 import orjson
 
 from application.container import Container
-from infrastructure.database.alchemy_gateway import SessionManager
+from domain.profile.registry import ProfileReadRegistry, ProfileWriteRegistry
+from domain.profile.schema import CreateProfile
 
 
-async def create_profile_on_message(raw_message: Any, session_manager: SessionManager = Container.alchemy_manager()) -> None:
+async def create_profile_on_message(raw_message: Any) -> None:
     message = (
-        orjson.loads(raw_message.body)
-        if isinstance(raw_message.body, (bytes, bytearray))
-        else raw_message.body
+        orjson.loads(raw_message)
+        if isinstance(raw_message, (bytes, bytearray))
+        else raw_message
     )
 
-    if message:
-        account_on_message = AccountIn(
-            name=message["login"],
-            profile_uuid=message["id"],
-            profile_phone=message["phone_number"],
+    await handle_user_data(message=message)
+
+
+async def handle_user_data(
+    message: dict,
+    read_profile: ProfileReadRegistry = Container.profile_read_registry(),
+    write_profile: ProfileWriteRegistry = Container.profile_write_registry(),
+) -> None:
+    existing_profile = await read_profile.get_by_user_uuid(
+        user_uuid=message["user_uuid"]
+    )
+    profile_on_message = CreateProfile(
+        user_uuid=message["user_uuid"],
+        first_name="Иван",
+        last_name="Иванов",
+        occupation=" ",
+        status=" ",
+        bio=" ",
+    )
+    if not existing_profile:
+        if message["event_type"] == "create":
+            await write_profile.create(cmd=profile_on_message)
+    if message["event_type"] == "update":
+        await write_profile.update(
+            cmd=profile_on_message, prof_uuid=existing_profile.uuid
         )
-        try:
-            async with session_manager.async_session_factory() as session:
-                existing_account = await find_account_on_message(message["id"])
-                if existing_account:
-                    if message["event_type"] == EventType.UPDATE:
-                        stmt = (
-                            update(Account)
-                            .values(**account_on_message.model_dump())
-                            .where(Account.profile_uuid == message["id"])
-                        )
-                        await session.execute(stmt)
-                        await session.commit()
-                    if message["event_type"] == EventType.DELETE:
-                        stmt = delete(Account).where(
-                            Account.profile_uuid == message["id"],
-                        )
-                        await session.execute(stmt)
-                        await session.commit()
-                elif not existing_account and message["event_type"] == EventType.CREATE:
-                    stmt = insert(Account).values(**account_on_message.model_dump())
-                    await session.execute(stmt)
-                    await session.commit()
-        except Exception as e:
-            logging.error(f"Error while handling event: {e}")
-
-
-async def find_account_on_message(
-        user_uuid: Union[str, UUID],
-        session_manager: SessionManager = Container.alchemy_manager(),
-) -> AccountOut:
-    async with session_manager.async_session_factory() as session:
-        stmt = select(Account).where(Account.profile_uuid == user_uuid)
-        answer = await session.execute(stmt)
-        return answer.scalar_one_or_none()
+    if message["event_type"] == "delete":
+        await write_profile.delete(prof_uuid=existing_profile.uuid)

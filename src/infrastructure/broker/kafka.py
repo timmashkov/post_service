@@ -91,5 +91,6 @@ class KafkaConsumer(BaseMQ):
     async def init_consuming(self, on_message: callable | Awaitable) -> None:
         await self._init_logger()
         async for msg in self.__consumer:
-            await on_message(msg)
+            response = self.deserialize_message(msg.value)
+            await on_message(response)
             logging.info("Сообщение получено")

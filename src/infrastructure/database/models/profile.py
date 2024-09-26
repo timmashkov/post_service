@@ -26,8 +26,8 @@ class Profile(Base):
     friends: Mapped[list["Profile"]] = relationship(
         "Profile",
         secondary="friends",
-        primaryjoin="Profile.id==Friend.profile_id",
-        secondaryjoin="Profile.id==Friend.friend_id",
+        primaryjoin="Profile.uuid==Friend.profile_id",
+        secondaryjoin="Profile.uuid==Friend.friend_id",
         lazy="noload",
     )
 

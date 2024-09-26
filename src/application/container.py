@@ -1,6 +1,7 @@
 from redis.asyncio import Redis
 
 from application.config import settings
+from domain.profile.registry import ProfileReadRegistry, ProfileWriteRegistry
 from infrastructure.base_entities.singleton import OnlyContainer, Singleton
 from infrastructure.broker.kafka import KafkaConsumer, KafkaProducer
 from infrastructure.database.alchemy_gateway import SessionManager
@@ -39,4 +40,14 @@ class Container(Singleton):
         port=settings.KAFKA.port,
         topics=settings.KAFKA.topics,
         logging_config=settings.LOG_LEVEL,
+    )
+
+    profile_read_registry = OnlyContainer(
+        ProfileReadRegistry,
+        session_manager=alchemy_manager(),
+    )
+
+    profile_write_registry = OnlyContainer(
+        ProfileWriteRegistry,
+        session_manager=alchemy_manager(),
     )

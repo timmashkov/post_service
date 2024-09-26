@@ -11,4 +11,3 @@ class ProfileNotFound(BaseAPIException):
 class ProfileAlreadyExists(BaseAPIException):
     message = "This profile already exists"
     status_code = status.HTTP_403_FORBIDDEN
-
