@@ -2,11 +2,15 @@ from application.amqp_handler import process
 from application.config import settings
 from application.container import Container
 from infrastructure.server.server import Server
+from presentation.profile import ProfileRouter
 
 post_service = Server(
     name=settings.NAME,
-    routers=[],
-    start_callbacks=[process.start, Container.producer_client().connect],
+    routers=[ProfileRouter.api_router],
+    start_callbacks=[
+        process.start,
+        # Container.producer_client().connect
+    ],
     stop_callbacks=[
         Container.redis().close,
         process.close,
