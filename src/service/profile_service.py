@@ -5,6 +5,7 @@ from fastapi import Depends
 from application.container import Container
 from domain.profile.registry import ProfileReadRegistry, ProfileWriteRegistry
 from domain.profile.schema import CreateProfile, GetProfileByUUID, ProfileReturnData
+from infrastructure.cache.redis_cache import RedisCache
 
 
 class ProfileService:
@@ -14,12 +15,15 @@ class ProfileService:
         write_repository: ProfileWriteRegistry = Depends(
             Container.profile_write_registry,
         ),
+        cache_repository: RedisCache = Depends(Container.redis_cache),
     ):
         self.read_repo = read_repository
         self.write_repo = write_repository
+        self.cache = cache_repository
 
     async def get(self, cmd: GetProfileByUUID) -> Optional[ProfileReturnData]:
-        return await self.read_repo.get(prof_uuid=cmd.uuid)
+        profile = await self.cache.cache(ttl=660, timeout=0.1, func=self.read_repo.get, prof_uuid=cmd.uuid)
+        return profile
 
     async def get_list(self, parameter: str) -> Optional[List[ProfileReturnData]]:
         return await self.read_repo.get_list(parameter=parameter)

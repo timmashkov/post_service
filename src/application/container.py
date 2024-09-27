@@ -5,6 +5,7 @@ from domain.post.registry import PostReadRegistry, PostWriteRegistry
 from domain.profile.registry import ProfileReadRegistry, ProfileWriteRegistry
 from infrastructure.base_entities.singleton import OnlyContainer, Singleton
 from infrastructure.broker.kafka import KafkaConsumer, KafkaProducer
+from infrastructure.cache.redis_cache import RedisCache
 from infrastructure.database.alchemy_gateway import SessionManager
 
 
@@ -14,6 +15,11 @@ class Container(Singleton):
         Redis,
         **settings.REDIS,
         decode_responses=True,
+    )
+
+    redis_cache = OnlyContainer(
+        RedisCache,
+        redis=redis()
     )
 
     alchemy_manager = OnlyContainer(
