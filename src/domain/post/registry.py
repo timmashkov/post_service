@@ -13,10 +13,10 @@ from infrastructure.base_entities.abs_repository import (
 )
 from infrastructure.database.alchemy_gateway import SessionManager
 from infrastructure.database.models import Post
-from infrastructure.exceptions.user_exceptions import ProfileAlreadyExists
+from infrastructure.exceptions.user_exceptions import PostAlreadyExists
 
 
-class ProfileReadRegistry(AbstractReadRepository):
+class PostReadRegistry(AbstractReadRepository):
     def __init__(self, session_manager: SessionManager):
         super().__init__()
         self.model = Post
@@ -27,9 +27,9 @@ class ProfileReadRegistry(AbstractReadRepository):
             session_manager.async_session_factory
         )
 
-    async def get(self, prof_uuid: UUID) -> Optional[Post]:
-        async with self.transactional_session() as session:
-            stmt = select(self.model).filter(self.model.uuid == prof_uuid)
+    async def get(self, post_uuid: UUID) -> Optional[Post]:
+        async with self.async_session_factory() as session:
+            stmt = select(self.model).filter(self.model.uuid == post_uuid)
             result = await session.execute(stmt)
             answer = result.scalar_one_or_none()
         return answer
@@ -47,7 +47,7 @@ class ProfileReadRegistry(AbstractReadRepository):
         return final
 
 
-class ProfileWriteRegistry(AbstractWriteRepository):
+class PostWriteRegistry(AbstractWriteRepository):
     def __init__(self, session_manager: SessionManager):
         super().__init__()
         self.model = Post
@@ -66,10 +66,10 @@ class ProfileWriteRegistry(AbstractWriteRepository):
                 )
                 result = await session.execute(stmt)
                 await session.commit()
-                answer = result.mappings().first()
+                answer = result.scalar_one_or_none()
             return answer
         except (UniqueViolationError, IntegrityError):
-            raise ProfileAlreadyExists
+            raise PostAlreadyExists
 
     async def update(
         self,
@@ -85,7 +85,7 @@ class ProfileWriteRegistry(AbstractWriteRepository):
             )
             result = await session.execute(stmt)
             await session.commit()
-            answer = result.mappings().first()
+            answer = result.scalar_one_or_none()
         return answer
 
     async def delete(self, post_uuid: UUID) -> Optional[Post]:
@@ -97,5 +97,5 @@ class ProfileWriteRegistry(AbstractWriteRepository):
             )
             result = await session.execute(stmt)
             await session.commit()
-            answer = result.mappings().first()
+            answer = result.scalar_one_or_none()
         return answer

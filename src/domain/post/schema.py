@@ -13,7 +13,8 @@ class CreatePost(BaseModel):
     header: str
     hashtag: str
     body: str
-    likes: Optional[str] = None
+    likes: Optional[int] = None
+    profile_id: UUID
 
     @field_validator("hashtag")
     def check_hashtag(cls, data):

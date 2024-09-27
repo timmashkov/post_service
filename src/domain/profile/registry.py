@@ -73,7 +73,7 @@ class ProfileWriteRegistry(AbstractWriteRepository):
                 )
                 result = await session.execute(stmt)
                 await session.commit()
-                answer = result.mappings().first()
+                answer = result.scalar_one_or_none()
             return answer
         except (UniqueViolationError, IntegrityError):
             raise ProfileAlreadyExists
@@ -92,7 +92,7 @@ class ProfileWriteRegistry(AbstractWriteRepository):
             )
             result = await session.execute(stmt)
             await session.commit()
-            answer = result.mappings().first()
+            answer = result.scalar_one_or_none()
         return answer
 
     async def delete(self, prof_uuid: UUID) -> Optional[Profile]:
@@ -104,5 +104,5 @@ class ProfileWriteRegistry(AbstractWriteRepository):
             )
             result = await session.execute(stmt)
             await session.commit()
-            answer = result.mappings().first()
+            answer = result.scalar_one_or_none()
         return answer

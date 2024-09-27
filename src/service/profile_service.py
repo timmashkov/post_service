@@ -19,7 +19,7 @@ class ProfileService:
         self.write_repo = write_repository
 
     async def get(self, cmd: GetProfileByUUID) -> Optional[ProfileReturnData]:
-        raise await self.read_repo.get(prof_uuid=cmd.uuid)
+        return await self.read_repo.get(prof_uuid=cmd.uuid)
 
     async def get_list(self, parameter: str) -> Optional[List[ProfileReturnData]]:
         return await self.read_repo.get_list(parameter=parameter)

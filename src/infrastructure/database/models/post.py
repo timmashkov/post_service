@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class Post(Base):
-    __tablename__ = "post"
 
     header: Mapped[str] = mapped_column(String(50), unique=False, nullable=False)
     hashtag: Mapped[str] = mapped_column(String(30), unique=False, nullable=True)

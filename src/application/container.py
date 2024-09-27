@@ -1,6 +1,7 @@
 from redis.asyncio import Redis
 
 from application.config import settings
+from domain.post.registry import PostReadRegistry, PostWriteRegistry
 from domain.profile.registry import ProfileReadRegistry, ProfileWriteRegistry
 from infrastructure.base_entities.singleton import OnlyContainer, Singleton
 from infrastructure.broker.kafka import KafkaConsumer, KafkaProducer
@@ -49,5 +50,15 @@ class Container(Singleton):
 
     profile_write_registry = OnlyContainer(
         ProfileWriteRegistry,
+        session_manager=alchemy_manager(),
+    )
+
+    post_read_registry = OnlyContainer(
+        PostReadRegistry,
+        session_manager=alchemy_manager(),
+    )
+
+    post_write_registry = OnlyContainer(
+        PostWriteRegistry,
         session_manager=alchemy_manager(),
     )
