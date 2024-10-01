@@ -16,6 +16,7 @@ class CreateProfile(BaseModel):
     occupation: Optional[str] = None
     status: Optional[str] = None
     bio: Optional[str] = None
+    file_uuid: Optional[str] = None
 
 
 class ProfileReturnData(GetProfileByUUID, CreateProfile):

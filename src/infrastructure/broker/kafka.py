@@ -77,10 +77,10 @@ class KafkaConsumer(BaseMQ):
         logging.basicConfig(level=self.logging_config)
         logging.info("Инициализация logger прошла успешно")
 
-    async def connect(self) -> None:
+    async def connect(self, topic_name: Optional[str] = None) -> None:
         await self._init_logger()
         await self.__consumer.start()
-        self.__consumer.subscribe(self.topics)
+        self.choose_topic(topic=topic_name)
         logging.info("Инициализация kafka прошла успешно")
 
     async def disconnect(self) -> None:
@@ -94,3 +94,14 @@ class KafkaConsumer(BaseMQ):
             response = self.deserialize_message(msg.value)
             await on_message(response)
             logging.info("Сообщение получено")
+
+    def choose_topic(self, topic: Optional[str]) -> None:
+        if topic:
+            routing_keys: Optional[list[str]] = []
+            routing_keys.append(topic)
+            if routing_keys:  # Убедимся, что список не пустой
+                self.__consumer.subscribe(topics=routing_keys)
+            else:
+                raise ValueError(f"Топик {topic} не найден в списке доступных топиков")
+        else:
+            raise ValueError("Необходимо указать топик")

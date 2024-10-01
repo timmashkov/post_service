@@ -5,6 +5,7 @@ from fastapi import Depends
 from application.container import Container
 from domain.post.registry import PostReadRegistry, PostWriteRegistry
 from domain.post.schema import CreatePost, GetPostByUUID, PostReturnData
+from infrastructure.exceptions.user_exceptions import PostNotFound
 
 
 class PostService:

@@ -22,7 +22,9 @@ class ProfileService:
         self.cache = cache_repository
 
     async def get(self, cmd: GetProfileByUUID) -> Optional[ProfileReturnData]:
-        profile = await self.cache.cache(ttl=660, timeout=0.1, func=self.read_repo.get, prof_uuid=cmd.uuid)
+        profile = await self.cache.cache(
+            ttl=660, timeout=0.1, func=self.read_repo.get, prof_uuid=cmd.uuid
+        )
         return profile
 
     async def get_list(self, parameter: str) -> Optional[List[ProfileReturnData]]:
@@ -32,7 +34,10 @@ class ProfileService:
         return await self.write_repo.create(cmd=data)
 
     async def update(
-        self, data: CreateProfile, prof_uuid: GetProfileByUUID
+        self,
+        data: CreateProfile,
+        prof_uuid: GetProfileByUUID,
+        avatar=None,
     ) -> Optional[ProfileReturnData]:
         return await self.write_repo.update(cmd=data, prof_uuid=prof_uuid.uuid)
 

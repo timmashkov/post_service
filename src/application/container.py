@@ -17,10 +17,7 @@ class Container(Singleton):
         decode_responses=True,
     )
 
-    redis_cache = OnlyContainer(
-        RedisCache,
-        redis=redis()
-    )
+    redis_cache = OnlyContainer(RedisCache, redis=redis())
 
     alchemy_manager = OnlyContainer(
         SessionManager,

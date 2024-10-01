@@ -12,20 +12,24 @@ from infrastructure.handlers.asyncio_handlers import run_with_timeout
 
 class RedisCache:
     def __init__(
-            self,
-            redis: Redis,
-            loop: asyncio.AbstractEventLoop = asyncio.get_event_loop(),
-            logger: logging.Logger = logging,
-            serializer=orjson,
+        self,
+        redis: Redis,
+        loop: asyncio.AbstractEventLoop = asyncio.get_event_loop(),
+        logger: logging.Logger = logging,
+        serializer=orjson,
     ) -> None:
         self.redis = redis
         self.loop = loop
         self.logger = logger
         self.serializer = serializer
 
-    async def set(self, key: str, value: Any, timeout: int | float, expire: int | timedelta) -> None:
+    async def set(
+        self, key: str, value: Any, timeout: int | float, expire: int | timedelta
+    ) -> None:
         func = self.redis.set(key, self.serializer.dumps(value), ex=expire)
-        await run_with_timeout(func, timeout=timeout, operation_name="RedisCache Set", logger=self.logger)
+        await run_with_timeout(
+            func, timeout=timeout, operation_name="RedisCache Set", logger=self.logger
+        )
 
     async def get(self, key, timeout) -> Any:
         result = await run_with_timeout(
@@ -58,20 +62,28 @@ class RedisCache:
     def cache(self, ttl: float = 60, timeout: float = 0.07, *args, **kwargs):
         if func_cached := kwargs.pop("func", None):
             if asyncio.iscoroutinefunction(func_cached):
-                return self._cache_impl(func=func_cached, *args, timeout=timeout, expire=ttl, **kwargs)
+                return self._cache_impl(
+                    func=func_cached, *args, timeout=timeout, expire=ttl, **kwargs
+                )
             return self.loop.run_until_complete(
-                self._cache_impl(func=func_cached, *args, timeout=timeout, expire=ttl, **kwargs)
+                self._cache_impl(
+                    func=func_cached, *args, timeout=timeout, expire=ttl, **kwargs
+                )
             )
 
         def decorator(func):
             @functools.wraps(func)
             async def async_wrapper(*local_args, **local_kwargs):
-                return await self._cache_impl(func, *local_args, timeout=timeout, expire=ttl, **local_kwargs)
+                return await self._cache_impl(
+                    func, *local_args, timeout=timeout, expire=ttl, **local_kwargs
+                )
 
             @functools.wraps(func)
             def sync_wrapper(*local_args, **local_kwargs):
                 return self.loop.run_until_complete(
-                    self._cache_impl(func, *local_args, timeout=timeout, expire=ttl, **local_kwargs)
+                    self._cache_impl(
+                        func, *local_args, timeout=timeout, expire=ttl, **local_kwargs
+                    )
                 )
 
             return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper

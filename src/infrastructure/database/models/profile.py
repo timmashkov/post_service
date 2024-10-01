@@ -23,6 +23,10 @@ class Profile(Base):
     status: Mapped[str] = mapped_column(Text, unique=False, nullable=True)
     bio: Mapped[str] = mapped_column(Text, unique=False, nullable=True)
 
+    file_uuid: Mapped[str] = mapped_column(
+        String, unique=True, nullable=True, comment="УУИД фото"
+    )
+
     friends: Mapped[list["Profile"]] = relationship(
         "Profile",
         secondary="friends",

@@ -1,7 +1,8 @@
-from typing import List
+import asyncio
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
 from pydantic import BaseModel
 
 from domain.profile.schema import CreateProfile, GetProfileByUUID, ProfileReturnData
@@ -43,10 +44,11 @@ class ProfileRouter:
     async def update(
         user_uuid: str | UUID,
         incoming_data: input_model,
+        data: Optional[UploadFile] = None,
         service=service_client,
     ) -> output_model:
         return await service.update(
-            data=incoming_data, prof_uuid=GetProfileByUUID(uuid=user_uuid)
+            data=incoming_data, prof_uuid=GetProfileByUUID(uuid=user_uuid), avatar=data
         )
 
     @staticmethod

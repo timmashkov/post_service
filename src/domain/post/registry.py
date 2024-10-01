@@ -99,3 +99,16 @@ class PostWriteRegistry(AbstractWriteRepository):
             await session.commit()
             answer = result.scalar_one_or_none()
         return answer
+
+    async def put_like(self, post_uuid: str | UUID, likes_count: int) -> Optional[dict]:
+        async with self.transactional_session() as session:
+            stmt = (
+                update(self.model)
+                .where(self.model.uuid == post_uuid)
+                .values(likes=likes_count)
+                .returning(self.model.likes)
+            )
+            result = await session.execute(stmt)
+            await session.commit()
+            answer = result.mappings().first()
+        return answer

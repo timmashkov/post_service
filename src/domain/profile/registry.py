@@ -51,7 +51,6 @@ class ProfileReadRegistry(AbstractReadRepository):
                 stmt = select(self.model).order_by(option)
                 result = await session.execute(stmt)
                 final = result.scalars().all()
-        print(final)
         return final
 
 

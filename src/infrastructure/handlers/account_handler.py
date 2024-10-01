@@ -22,6 +22,7 @@ async def handle_user_data(
     read_profile: ProfileReadRegistry = Container.profile_read_registry(),
     write_profile: ProfileWriteRegistry = Container.profile_write_registry(),
 ) -> None:
+    # TODO: немного допилить логику, иногда консумер валится
     existing_profile = await read_profile.get_by_user_uuid(
         user_uuid=message["user_uuid"]
     )

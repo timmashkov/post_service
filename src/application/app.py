@@ -10,7 +10,7 @@ post_service = Server(
     routers=[ProfileRouter.api_router, PostRouter.api_router],
     start_callbacks=[
         process.start,
-        # Container.producer_client().connect
+        Container.producer_client().connect,
     ],
     stop_callbacks=[
         Container.redis().close,

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "post-service"
-version = "0.0.3"
+version = "0.0.5"
 description = ""
 authors = ["timmashkov <bodomizer@yandex.ru>"]
 readme = "README.md"
@@ -19,6 +19,7 @@ flake8 = "^7.1.1"
 isort = "^5.13.2"
 black = "^24.8.0"
 orjson = "^3.10.7"
+python-multipart = "^0.0.12"
 
 
 [build-system]
