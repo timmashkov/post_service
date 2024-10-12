@@ -21,3 +21,8 @@ class PostNotFound(BaseAPIException):
 class PostAlreadyExists(BaseAPIException):
     message = "This profile already exists"
     status_code = status.HTTP_403_FORBIDDEN
+
+
+class FriendAlreadyExist(BaseAPIException):
+    message = "Friend already exists"
+    status_code = status.HTTP_403_FORBIDDEN

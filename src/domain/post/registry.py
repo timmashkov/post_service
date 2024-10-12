@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 from uuid import UUID
 
 from asyncpg import UniqueViolationError
@@ -13,7 +13,7 @@ from infrastructure.base_entities.abs_repository import (
 )
 from infrastructure.database.alchemy_gateway import SessionManager
 from infrastructure.database.models import Post
-from infrastructure.exceptions.user_exceptions import PostAlreadyExists
+from infrastructure.exceptions.profile_exceptions import PostAlreadyExists
 
 
 class PostReadRegistry(AbstractReadRepository):
@@ -27,7 +27,7 @@ class PostReadRegistry(AbstractReadRepository):
             session_manager.async_session_factory
         )
 
-    async def get(self, post_uuid: UUID) -> Optional[Post]:
+    async def get(self, post_uuid: Union[UUID, str]) -> Optional[Post]:
         async with self.async_session_factory() as session:
             stmt = select(self.model).filter(self.model.uuid == post_uuid)
             result = await session.execute(stmt)

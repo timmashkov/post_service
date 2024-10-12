@@ -1,8 +1,11 @@
+from asyncio import Queue
+
 from redis import Redis
 
+from application.config import settings
 from application.container import Container
 from domain.post.registry import PostReadRegistry, PostWriteRegistry
-from infrastructure.exceptions.user_exceptions import PostNotFound
+from infrastructure.exceptions.profile_exceptions import PostNotFound
 
 
 async def put_likes(
@@ -16,6 +19,7 @@ async def put_likes(
 
 
 async def accumulate_data(redis: Redis = Container.redis()):
+    likes_queue = Queue(maxsize=settings.LIKES_COUNT)
     data = await redis.g
 
 

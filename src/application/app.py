@@ -7,10 +7,13 @@ from presentation.profile import ProfileRouter
 
 post_service = Server(
     name=settings.NAME,
-    routers=[ProfileRouter.api_router, PostRouter.api_router],
+    routers=[
+        ProfileRouter.api_router,
+        PostRouter.api_router,
+    ],
     start_callbacks=[
-        process.start,
-        Container.producer_client().connect,
+        # process.start,
+        # Container.producer_client().connect,
     ],
     stop_callbacks=[
         Container.redis().close,

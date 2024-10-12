@@ -1,6 +1,7 @@
 **/__pycache__/
 /.idea/
 /rabbitmq
+/docker
 .venv
 *.log
 .env
