@@ -21,6 +21,7 @@ black = "^24.8.0"
 orjson = "^3.10.7"
 python-multipart = "^0.0.12"
 fastapi-filter = "^2.0.0"
+asynch = "^0.2.4"
 
 
 [build-system]

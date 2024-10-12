@@ -7,6 +7,7 @@ from infrastructure.base_entities.singleton import OnlyContainer, Singleton
 from infrastructure.broker.kafka import KafkaConsumer, KafkaProducer
 from infrastructure.cache.redis_cache import RedisCache
 from infrastructure.database.alchemy_gateway import SessionManager
+from infrastructure.database.clickhouse_gateway import ClickHouseManager
 
 
 class Container(Singleton):
@@ -28,6 +29,15 @@ class Container(Singleton):
         port=settings.POSTGRES.port,
         database=settings.POSTGRES.database,
         echo=settings.POSTGRES.echo,
+    )
+
+    clickhouse_manager = OnlyContainer(
+        ClickHouseManager,
+        host=settings.CLICKHOUSE.host,
+        login=settings.CLICKHOUSE.login,
+        password=settings.CLICKHOUSE.password,
+        port=settings.CLICKHOUSE.port,
+        database=settings.CLICKHOUSE.database,
     )
 
     producer_client = OnlyContainer(
