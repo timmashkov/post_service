@@ -99,7 +99,7 @@ class KafkaConsumer(BaseMQ):
         if topic:
             routing_keys: Optional[list[str]] = []
             routing_keys.append(topic)
-            if routing_keys:  # Убедимся, что список не пустой
+            if routing_keys:
                 self.__consumer.subscribe(topics=routing_keys)
             else:
                 raise ValueError(f"Топик {topic} не найден в списке доступных топиков")

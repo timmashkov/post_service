@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "post-service"
-version = "0.0.5"
+version = "0.1.0"
 description = ""
 authors = ["timmashkov <bodomizer@yandex.ru>"]
 readme = "README.md"
@@ -21,7 +21,9 @@ black = "^24.8.0"
 orjson = "^3.10.7"
 python-multipart = "^0.0.12"
 fastapi-filter = "^2.0.0"
-asynch = "^0.2.4"
+tenacity = "^9.0.0"
+clickhouse-driver = "^0.2.9"
+pypika = "^0.48.9"
 
 
 [build-system]

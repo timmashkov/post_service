@@ -34,7 +34,7 @@ class Container(Singleton):
     clickhouse_manager = OnlyContainer(
         ClickHouseManager,
         host=settings.CLICKHOUSE.host,
-        login=settings.CLICKHOUSE.login,
+        user=settings.CLICKHOUSE.user,
         password=settings.CLICKHOUSE.password,
         port=settings.CLICKHOUSE.port,
         database=settings.CLICKHOUSE.database,

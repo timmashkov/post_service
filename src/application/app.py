@@ -1,4 +1,5 @@
 from application.amqp_handler import process
+from application.background import background_process
 from application.config import settings
 from application.container import Container
 from infrastructure.server.server import Server
@@ -12,6 +13,7 @@ post_service = Server(
         PostRouter.api_router,
     ],
     start_callbacks=[
+        background_process.start,
         # process.start,
         # Container.producer_client().connect,
     ],
